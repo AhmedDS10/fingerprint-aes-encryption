@@ -210,7 +210,7 @@ This approach leverages the uniqueness of an individual's fingerprint to enhance
               )
   st.sidebar.markdown("---")
   st.sidebar.image("files/aes_256_bot.jpg", caption="To receive fingerprint data" , use_container_width =True)
-  st.sidebar.image("files/chat_id_bot.jpg", caption="To get the chat ID" , use_container_width =True)
+  st.sidebar.image("files/chat_id_bot.JPG", caption="To get the chat ID" , use_container_width =True)
   ##st.sidebar.success("The integration of biometric authentication, particularly fingerprint recognition, with encryption methods like AES-256 offers a robust solution for securing sensitive data. This approach combines the unique characteristics of fingerprints with the strength of AES-256 encryption to enhance data security.")
 
 if __name__ == "__main__":
