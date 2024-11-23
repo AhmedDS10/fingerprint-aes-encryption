@@ -102,7 +102,7 @@ def load_encrypted_file(encrypted_data):
 
 def main():
   st.set_page_config(page_title="Fingerprint-Based AES-256 Encryption", page_icon="shield", layout="wide")
-  st.image("files/main_logo.png", use_column_width=True)
+  st.image("files/main_logo.png", use_container_width =True)
   st.title(":shield: Fingerprint-Based AES-256 Encryption")
   st.markdown("""
 Fingerprint-based AES-256 encryption is a security mechanism that combines biometric authentication with advanced encryption standards to protect sensitive data.
@@ -209,8 +209,8 @@ This approach leverages the uniqueness of an individual's fingerprint to enhance
                   mime="application/octet-stream"
               )
   st.sidebar.markdown("---")
-  st.sidebar.image("files/aes_256_bot.jpg", caption="To receive fingerprint data" , use_column_width=True)
-  st.sidebar.image("files/chat_id_bot.jpg", caption="To get the chat ID" , use_column_width=True)
+  st.sidebar.image("files/aes_256_bot.jpg", caption="To receive fingerprint data" , use_container_width =True)
+  st.sidebar.image("files/chat_id_bot.jpg", caption="To get the chat ID" , use_container_width =True)
   ##st.sidebar.success("The integration of biometric authentication, particularly fingerprint recognition, with encryption methods like AES-256 offers a robust solution for securing sensitive data. This approach combines the unique characteristics of fingerprints with the strength of AES-256 encryption to enhance data security.")
 
 if __name__ == "__main__":
