@@ -105,8 +105,7 @@ def main():
   st.image("files/main_logo.png", use_container_width =True)
   st.title(":shield: Fingerprint-Based AES-256 Encryption")
   st.markdown("""
-Fingerprint-based AES-256 encryption is a security mechanism that combines biometric authentication with advanced encryption standards to protect sensitive data.
-This approach leverages the uniqueness of an individual's fingerprint to enhance the security of the encryption and decryption processes.
+A secure file encryption application that combines biometric authentication (fingerprint) with AES-256 encryption to protect sensitive data. 
 """)
 
   menu = ["Encrypt File", "Decrypt File"]
