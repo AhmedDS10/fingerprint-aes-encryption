@@ -1,6 +1,7 @@
 import os
 import base64
 import streamlit as st
+import requests
 from cryptography.hazmat.primitives import hashes, padding
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -97,15 +98,55 @@ def load_encrypted_file(encrypted_data):
   return salt, iv, ciphertext
 
 # ===========================
+# Telegram Functions
+# ===========================
+
+def send_file_to_telegram(file_data, chat_id, bot_token, caption=None):
+  """
+  Sends a file to a Telegram chat using the Telegram Bot API.
+  
+  :param file_data: File data to send (bytes)
+  :param chat_id: Telegram chat ID to send the file to
+  :param bot_token: Telegram bot token
+  :param caption: Optional message caption
+  :return: True if successful, False otherwise
+  """
+  url = f"https://api.telegram.org/bot{bot_token}/sendDocument"
+  
+  files = {
+      'document': ('encrypted.dat', file_data, 'application/octet-stream')
+  }
+  
+  data = {
+      'chat_id': chat_id,
+  }
+  
+  if caption:
+      data['caption'] = caption
+  
+  try:
+      response = requests.post(url, data=data, files=files)
+      if response.status_code == 200:
+          return True, "File sent successfully to Telegram!"
+      else:
+          return False, f"Error sending file: {response.text}"
+  except Exception as e:
+      return False, f"Error sending file: {str(e)}"
+
+# ===========================
 # Streamlit App
 # ===========================
 
 def main():
+  # Telegram bot token
+  BOT_TOKEN = "7379376090:AAEpzTK-itDBVwB68O5tqcgtKXUMSo_x0Y0"
+
   st.set_page_config(page_title="Fingerprint-Based AES-256 Encryption", page_icon="shield", layout="wide")
-  st.image("files/main_logo.png", use_container_width =True)
+  st.image("files/main_logo.png", use_column_width=True)
   st.title(":shield: Fingerprint-Based AES-256 Encryption")
   st.markdown("""
-A secure file encryption application that combines biometric authentication (fingerprint) with AES-256 encryption to protect sensitive data. 
+Fingerprint-based AES-256 encryption is a security mechanism that combines biometric authentication with advanced encryption standards to protect sensitive data.
+This approach leverages the uniqueness of an individual's fingerprint to enhance the security of the encryption and decryption processes.
 """)
 
   menu = ["Encrypt File", "Decrypt File"]
@@ -121,10 +162,20 @@ A secure file encryption application that combines biometric authentication (fin
       # Step 2: Upload File to Encrypt
       st.subheader("2. Upload File to Encrypt")
       plaintext_file = st.file_uploader("Choose a plaintext file", type=["txt", "pdf", "docx", "png", "jpg", "jpeg", "bmp", "bin"])
+      
+      # Step 3: Telegram Integration
+      st.subheader("3. Telegram Integration (Optional)")
+      send_to_telegram = st.checkbox("Send encrypted file to Telegram")
+      
+      telegram_chat_id = ""
+      if send_to_telegram:
+          telegram_chat_id = st.text_input("Enter Telegram Chat ID", help="This is the ID of the chat where you want to send the encrypted file.")
 
       if st.button("Start Encryption"):
           if fingerprint_file is None or plaintext_file is None:
               st.error(":warning: Please upload both fingerprint data and the file to encrypt.")
+          elif send_to_telegram and not telegram_chat_id:
+              st.error(":warning: Please enter a Telegram Chat ID or uncheck the 'Send to Telegram' option.")
           else:
               # Read fingerprint data
               fingerprint_data = fingerprint_file.read()
@@ -152,10 +203,21 @@ A secure file encryption application that combines biometric authentication (fin
                   file_name="encrypted.dat",
                   mime="application/octet-stream"
               )
-
-              # Optionally, display base64 string
-              # st.text("Base64 Encrypted Data:")
-              # st.text(encrypted_b64)
+              
+              # Send to Telegram if requested
+              if send_to_telegram and telegram_chat_id:
+                  with st.spinner("Sending to Telegram..."):
+                      success, message = send_file_to_telegram(
+                          encrypted_combined,
+                          telegram_chat_id,
+                          BOT_TOKEN,
+                          caption="Encrypted file from Fingerprint-Based AES-256 Encryption app"
+                      )
+                      
+                      if success:
+                          st.success(f":rocket: {message}")
+                      else:
+                          st.error(f":warning: {message}")
 
   elif choice == "Decrypt File":
       st.header(":unlock: Decrypt a File")
@@ -207,10 +269,10 @@ A secure file encryption application that combines biometric authentication (fin
                   file_name="decrypted_file",
                   mime="application/octet-stream"
               )
+              
   st.sidebar.markdown("---")
-  st.sidebar.image("files/aes_256_bot.jpg", caption="To receive fingerprint data" , use_container_width =True)
-  st.sidebar.image("files/chat_id_bot.JPG", caption="To get the chat ID" , use_container_width =True)
-  ##st.sidebar.success("The integration of biometric authentication, particularly fingerprint recognition, with encryption methods like AES-256 offers a robust solution for securing sensitive data. This approach combines the unique characteristics of fingerprints with the strength of AES-256 encryption to enhance data security.")
+  st.sidebar.image("files/aes_256_bot.jpg", caption="To receive fingerprint data", use_column_width=True)
+  st.sidebar.image("files/chat_id_bot.jpg", caption="To get the chat ID", use_column_width=True)
 
 if __name__ == "__main__":
   main()
